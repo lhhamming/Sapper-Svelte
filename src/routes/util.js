@@ -146,6 +146,41 @@ export async function getItems() {
     return data
 }
 
+export function createSvelteNav(){
+    const nav = document.querySelector('ul')
+    const payload = getTokenPayload();
+    const listItemHome = document.createElement('li')
+
+    const ahrefHome = document.createElement('a')
+    ahrefHome.innerText = 'Home'
+    ahrefHome.setAttribute('aria-current', '{segment === undefined ? \'page\' : undefined}')
+    ahrefHome.setAttribute('href', '.')
+
+    //<li><a aria-current="{segment === undefined ? 'page' : undefined}" href=".">home</a></li>
+    if(!payload){
+        //The user is not logged in.
+        const listItemLogin = document.createElement('li')
+        const ahrefLogin = document.createElement('a')
+        ahrefLogin.innerText = 'Login'
+        //<li><a aria-current="{segment === 'about' ? 'page' : undefined}" href="about">about</a></li>
+            ahrefLogin.setAttribute('aria-current',  "{segment === 'login' ? 'page' : undefined}")
+        ahrefLogin.setAttribute('href', 'login')
+
+        const listItemRegister = document.createElement('li')
+        const ahrefRegister = document.createElement('a')
+        ahrefRegister.innerText = 'Register'
+        ahrefRegister.setAttribute('aria-current', )
+    }else if(payload.roles.includes('Admin')){
+        const ahref_Home = document.createElement('a')
+        ahref_Home.innerText = 'Home'
+        ahref_Home.setAttribute('aria-current', '{segment === undefined ? \'page\' : undefined}')
+        ahref_Home.setAttribute('href', '.')
+
+    }else{
+
+    }
+}
+
 async function getItemsSearch(searchFieldValue) {
     const token = localStorage.getItem(sessionTokenString)
     const auctionUrl = `${websiteURL}/api/auctions/search/${searchFieldValue}`
