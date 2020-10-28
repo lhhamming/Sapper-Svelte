@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Saxion Auction site</title>
+    <link rel="stylesheet" href="public/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="./page/auction.js" type="module"></script>
+</head>
+<body>
+
+<header>
+    <div class="banner_image"></div>
+</header>
+<!-- Don't forget to only show the options you are allowed to see-->
+<nav class="auction_nav">
+
+</nav>
+<main>
+    <div class="row">
+        <section class="auction_detail">
+            <div class="auction_column">
+                <img src="public/product.jpeg"/>
+            </div>
+            <div class="auction_column">
+                <h1 id="auction_title" class="auction_title">Title auction</h1>
+                <p id="auction_description"  class="auction_description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                    nisi ut aliquip ex ea commodo consequat.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                    nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <form method="" action="/">
+                    <input class="auction_bid_amount" type="text" placeholder="amount" />
+                    <input class="auction_bid_button" type="submit" value="Bid" />
+                </form>
+                <div id="auction_detail_bid_list" class="auction_detail_bid_list">
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+</body>
+</html>
