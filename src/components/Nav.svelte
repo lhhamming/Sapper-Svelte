@@ -1,11 +1,36 @@
 <script>
-	import {onMount} from "svelte";
+
+import {onMount} from "svelte";
+import {getTokenPayload, getItemsSearch, resetToken} from "../routes/util";
+	import {setContext} from 'svelte';
+
+	let searchedItems = [];
+
 
 	export let segment;
-	import {createSvelteNav} from "../routes/util";
+	let userToken
 	onMount( () =>{
-		createSvelteNav();
+		userToken = getTokenPayload();
 	})
+
+	setContext('SearchedItems', {
+		getItemsSearch
+	})
+
+	function searchForItem(event) {
+		event.preventDefault()
+		console.log('Searching for items')
+		const searchField = document.querySelector('input[type="text"]')
+		const searchFieldValue = searchField.value
+		getItemsSearch(searchFieldValue).then(foundItems =>{
+			searchedItems.push(foundItems)
+		})
+	}
+
+	function logout(){
+		resetToken()
+		window.location.href='/'
+	}
 
 
 </script>
@@ -58,13 +83,21 @@
 
 <nav>
 	<ul>
-		<!--
 		<li><a aria-current="{segment === undefined ? 'page' : undefined}" href=".">home</a></li>
-		<li><a aria-current="{segment === 'about' ? 'page' : undefined}" href="about">about</a></li>
-
-		 for the blog link, we're using rel=prefetch so that Sapper prefetches
-		     the blog data when we hover over the link or tap it on a touchscreen
-		<li><a rel=prefetch aria-current="{segment === 'blog' ? 'page' : undefined}" href="blog">blog</a></li>
-		-->
+		{#if userToken}
+			<li><a aria-current="{segment === 'bids' ? 'page' : undefined}" href="bids">Bids</a></li>
+			{#if userToken.roles.includes('admin')}
+				<li><a aria-current="{segment === 'administration' ? 'page' : undefined}" href="administration">Administration</a></li>
+			{/if}
+			<li><a aria-current="{segment === 'logout' ? 'page' : undefined}" on:click={() => logout()} href=".">Logout</a></li>
+		{:else}
+			<li><a aria-current="{segment === 'login' ? 'page' : undefined}" href="login">Login</a></li>
+		{/if}
+		<li style="float: right">
+			<form>
+				<input type="text" placeholder="search..." >
+				<button on:click={() => searchForItem(event)}> Search</button>
+			</form>
+		</li>
 	</ul>
 </nav>

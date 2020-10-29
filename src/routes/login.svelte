@@ -1,6 +1,8 @@
 <script>
     import {goto} from '@sapper/app'
 
+    import Nav from '../components/Nav.svelte'
+
     let user
     let password
     let errorMessage
@@ -19,8 +21,8 @@
                 .then(json =>{
                     if(response.status==200){
                         console.log("")
-                        localStorage.setItem('Authorization', json.token)
-                        goto('/about')
+                        localStorage.setItem('AUTHTOKEN', json.token)
+                        goto('/')
                     }else{
                         console.log('Error in json message: ' + json.errorMessage)
                         errorMessage = json.errorMessage

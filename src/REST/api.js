@@ -11,6 +11,7 @@ router.get('/test', (req,res) =>{
 
 router.use((req,res,next) =>{
     try{
+        console.log(`inside of Authorization ${req.header('Authorization')}`)
         const payload = verifyToken(req.header('Authorization'))
         if(payload){
             req.token = payload

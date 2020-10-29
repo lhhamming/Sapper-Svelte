@@ -34,7 +34,10 @@ export function resetToken() {
     // clear token when users logs out
     sessionToken = undefined
     localStorage.setItem(sessionTokenString, undefined)
+}
 
+export function getToken(){
+    return sessionToken;
 }
 
 export function getTokenPayload() {
@@ -129,7 +132,6 @@ export function createNavbar() {
 }
 
 export async function getItems() {
-    console.log("Fetching items")
     const token = localStorage.getItem(sessionTokenString)
     const auctionUrl = `${websiteURL}/api/auctions`
     const options = {
@@ -142,46 +144,21 @@ export async function getItems() {
     }
     let reponse = await fetch(auctionUrl,options)
     let data = await reponse.json();
-    console.log("Data: " +data)
     return data
 }
 
-export function createSvelteNav(){
-    const nav = document.querySelector('ul')
-    const payload = getTokenPayload();
-    const listItemHome = document.createElement('li')
-
-    const ahrefHome = document.createElement('a')
-    ahrefHome.innerText = 'Home'
-    ahrefHome.setAttribute('aria-current', '{segment === undefined ? \'page\' : undefined}')
-    ahrefHome.setAttribute('href', '.')
-
-    //<li><a aria-current="{segment === undefined ? 'page' : undefined}" href=".">home</a></li>
-    if(!payload){
-        //The user is not logged in.
-        const listItemLogin = document.createElement('li')
-        const ahrefLogin = document.createElement('a')
-        ahrefLogin.innerText = 'Login'
-        //<li><a aria-current="{segment === 'about' ? 'page' : undefined}" href="about">about</a></li>
-            ahrefLogin.setAttribute('aria-current',  "{segment === 'login' ? 'page' : undefined}")
-        ahrefLogin.setAttribute('href', 'login')
-
-        const listItemRegister = document.createElement('li')
-        const ahrefRegister = document.createElement('a')
-        ahrefRegister.innerText = 'Register'
-        ahrefRegister.setAttribute('aria-current', )
-    }else if(payload.roles.includes('Admin')){
-        const ahref_Home = document.createElement('a')
-        ahref_Home.innerText = 'Home'
-        ahref_Home.setAttribute('aria-current', '{segment === undefined ? \'page\' : undefined}')
-        ahref_Home.setAttribute('href', '.')
-
-    }else{
-
-    }
+export function checkBestBid(givenJsonData) {
+    const token = getTokenPayload();
+    const userName = token.user
+    const lastItemIndex = (givenJsonData.length - 1)
+    const JSONFromArray = givenJsonData[lastItemIndex]
+    const lastUserInArray = JSONFromArray.user
+    if(lastUserInArray == userName)
+        return 'Yes';
+    return 'No';
 }
 
-async function getItemsSearch(searchFieldValue) {
+export async function getItemsSearch(searchFieldValue) {
     const token = localStorage.getItem(sessionTokenString)
     const auctionUrl = `${websiteURL}/api/auctions/search/${searchFieldValue}`
     const options = {
@@ -196,4 +173,21 @@ async function getItemsSearch(searchFieldValue) {
     let data = await reponse.json();
     console.log("Data: " +data)
     return data
+}
+
+export async function getAuctionItem(itemname) {
+    const token = getToken();
+    const url = `http://localhost:3000/api/auctions/${itemname}`
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer${token}`
+        }
+    }
+    let reponse = await fetch(url, options)
+    let data = await reponse.json();
+    return data
+
 }

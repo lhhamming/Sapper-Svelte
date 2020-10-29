@@ -76,6 +76,27 @@ router.get("/:name/bid/:amount", (req,res)=>{
     }
 })
 
+router.post("/:name/:user/remove", (req,res) =>{
+    const toFindItem = req.params.name;
+    const foundItem = auctionableItems.find(item => item.name === toFindItem)
+    if(foundItem){
+        for (let i = 0; i < foundItem.previousBids.length; i++) {
+            console.log(foundItem.previousBids[i])
+            const prevBid = foundItem.previousBids[i]
+            const userToRemove = req.params.user
+            const jsonPrevBid = JSON.parse(prevBid)
+            const userFromArray = jsonPrevBid.user
+            console.log(`prevBidUser = ${userFromArray} and user given is ${userToRemove}`)
+            if(userToRemove === userFromArray){
+                foundItem.previousBids.splice(i,1)
+                res.status(200).end();
+            }
+        }
+    }else{
+        res.status(404).end()
+    }
+})
+
 router.post("/:name/bid", (req,res) =>{
     console.log("In post of car/bid")
     console.log("User: " + req.token.user)
@@ -111,8 +132,22 @@ router.post("/:name/bid", (req,res) =>{
     }
 })
 
+router.post('/remove', (req,res) =>{
+    const toRemoveItem = req.body.name;
+    const foundItem = auctionableItems.find(item => item.name === toRemoveItem)
+    console.log(`Founditem : ${foundItem} and toRemoveItem : ${toRemoveItem}`)
+    if(foundItem){
+        const index = auctionableItems.indexOf(foundItem)
+        auctionableItems.splice(index,1)
+        console.log(auctionableItems)
+        res.status(200).end()
+    }
+    res.status(406).end()
+})
+
 router.get("/:name/removeBid", (req,res) =>{
     const toFindItemName = req.params.name;
+    console.log(toFindItemName)
     const foundItem = auctionableItems.find(item => item.name === toFindItemName);
     if(foundItem){
         if(foundItem.previousBids.length != 0){
@@ -128,6 +163,34 @@ router.get("/:name/removeBid", (req,res) =>{
 
     }else{
         res.status(404).end(`The item you have searched for was not found.`)
+    }
+})
+
+router.post('/update', (req,res) =>{
+    const tofindItemName = req.body.name;
+    const foundItem = auctionableItems.find(item => item.name === tofindItemName)
+    console.log(`foundItem = ${foundItem} and toFindItemName = ${tofindItemName}`)
+    if(foundItem){
+        console.log(req.body)
+        const newName = req.body.newName;
+        if(newName){
+            const newNameNoSpaces = newName.replace(/\s/g, '');
+            if(newNameNoSpaces !== ""){
+                //If it is not empty
+                foundItem.name = newName;
+            }
+        }
+        if(foundItem.startingBid !== req.body.startingBid){
+            foundItem.startingBid = req.body.startingBid;
+        }
+        if(foundItem.type !== req.body.type){
+            foundItem.type = req.body.type
+        }
+        if(!foundItem.expires || foundItem.expires !== req.body.expires){
+            //If it does not have an time yet.
+            foundItem.expires = req.body.expires;
+        }
+        console.log(foundItem)
     }
 })
 
