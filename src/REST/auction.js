@@ -145,6 +145,26 @@ router.post('/remove', (req,res) =>{
     res.status(406).end()
 })
 
+router.post('/create', (req,res) =>{
+    const toFindauction = auctionableItems.find(item => item.name === req.body.name)
+    if(!toFindauction){
+        const auctionItem = {
+            name : req.body.name,
+            startingBid : req.body.minimalBid,
+            currentBid : 0,
+            previousBids : [],
+            highestBidder : undefined,
+            description : req.body.description,
+            expireDate : req.body.expireDate,
+            type : req.body.type
+        }
+        //It does not exist. Create it
+        auctionableItems.push(auctionItem);
+        return res.status(200).end("The auction has been created")
+    }
+    return res.status(406).end("The auction could not be created cause there is already an item with the same name")
+})
+
 router.get("/:name/removeBid", (req,res) =>{
     const toFindItemName = req.params.name;
     console.log(toFindItemName)

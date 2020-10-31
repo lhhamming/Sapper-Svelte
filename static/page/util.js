@@ -2,9 +2,8 @@
 
 let sessionToken
 
-const websiteURL = 'http://localhost:3000'
-
 const sessionTokenString = 'AUTHTOKEN'
+const mySecret = 'My Secret on the Server side', bearerPrefix = 'Bearer';
 
 // send HTTP request, possibly with JSON body, and invoke callback when JSON response body arrives
 export function sendJSON({method, url, body}, callback) {
@@ -25,6 +24,19 @@ export function sendJSON({method, url, body}, callback) {
     xhr.send(body !== undefined ? JSON.stringify(body) : undefined)
 }
 
+export function sendRegInfo({url,body}, callback){
+    const xhr = new XMLHttpRequest();
+    xhr.onload = () =>{
+        console.log(xhr.status)
+        console.log(xhr.response)
+        callback(xhr.status, xhr.response)
+    }
+    xhr.open('PUT',url)
+    xhr.setRequestHeader('Content-Type', 'application/json')
+    xhr.send(JSON.stringify(body))
+
+}
+
 export function saveToken(token) {
     sessionToken = token
     localStorage.setItem(sessionTokenString, token)
@@ -34,10 +46,7 @@ export function resetToken() {
     // clear token when users logs out
     sessionToken = undefined
     localStorage.setItem(sessionTokenString, undefined)
-}
 
-export function getToken(){
-    return sessionToken;
 }
 
 export function getTokenPayload() {
@@ -133,35 +142,7 @@ export function createNavbar() {
 
 export async function getItems() {
     const token = localStorage.getItem(sessionTokenString)
-    const auctionUrl = `${websiteURL}/api/auctions`
-    const options = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer' + token
-        }
-    }
-    console.log(auctionUrl)
-    let reponse = await fetch(auctionUrl,options)
-    let data = await reponse.json();
-    return data
-}
-
-export function checkBestBid(givenJsonData) {
-    const token = getTokenPayload();
-    const userName = token.user
-    const lastItemIndex = (givenJsonData.length - 1)
-    const JSONFromArray = givenJsonData[lastItemIndex]
-    const lastUserInArray = JSONFromArray.user
-    if(lastUserInArray == userName)
-        return 'Yes';
-    return 'No';
-}
-
-export async function getItemsSearch(searchFieldValue) {
-    const token = localStorage.getItem(sessionTokenString)
-    const auctionUrl = `${websiteURL}/api/auctions/search/${searchFieldValue}`
+    const auctionUrl = 'http://localhost:8000/api/auctions'
     const options = {
         method: 'GET',
         headers: {
@@ -176,19 +157,22 @@ export async function getItemsSearch(searchFieldValue) {
     return data
 }
 
-export async function getAuctionItem(itemname) {
-    const token = getToken();
-    const url = `http://localhost:3000/api/auctions/${itemname}`
+async function getItemsSearch(searchFieldValue) {
+    const token = localStorage.getItem(sessionTokenString)
+    const auctionUrl = `http://localhost:8000/api/auctions/search/${searchFieldValue}`
     const options = {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': `Bearer${token}`
+            'Authorization': 'Bearer' + token
         }
     }
-    let reponse = await fetch(url, options)
+    let reponse = await fetch(auctionUrl,options)
     let data = await reponse.json();
+    console.log("Data: " +data)
     return data
-
 }
+
+
+
